@@ -1,5 +1,6 @@
 package com.edu.uba.projects.controller;
 
+import com.edu.uba.projects.dto.PetResponseDto;
 import com.edu.uba.projects.model.Pet;
 import com.edu.uba.projects.service.PetService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/pets")
+@RequestMapping("/pets")
 public class PetController {
 
 	private final PetService petService;
@@ -88,6 +89,20 @@ public class PetController {
 		try {
 			Pet adoptedPet = petService.adoptPet(id, ownerName);
 			return ResponseEntity.ok(adoptedPet);
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
+	@GetMapping("/{id}/talk")
+	@Operation(summary = "Talk with a pet by ID")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Talked to pet successfully"),
+			@ApiResponse(responseCode = "404", description = "Pet not found")
+	})
+	public ResponseEntity<PetResponseDto> talkWithPet(@PathVariable Long id, @RequestParam String message) {
+		try {
+			PetResponseDto response = petService.talkWithPetApi(id, message);
+			return ResponseEntity.ok(response);
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}

@@ -1,6 +1,7 @@
 package com.edu.uba.projects.service;
 
 import com.edu.uba.projects.dto.OwnerDto;
+import com.edu.uba.projects.dto.PetResponseDto;
 import com.edu.uba.projects.model.Pet;
 import com.edu.uba.projects.repository.PetRepository;
 import org.slf4j.Logger;
@@ -67,5 +68,11 @@ public class PetService {
 		log.info("Registered owner: {}", registeredOwner);
 
 		return pet;
+	}
+	public PetResponseDto talkWithPetApi(Long petId, String message) {
+		Supplier<RuntimeException> petNotFound = () -> new RuntimeException("Pet not found with id " + petId);
+		Pet pet = petRepository.findById(petId).orElseThrow(petNotFound);
+		log.info("Owner says: {} to pet: {}", message, pet.getName());
+		return new PetResponseDto(pet.getName(), "wush wush");
 	}
 }
