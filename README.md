@@ -22,13 +22,19 @@ To set up the PSA Projects Management API on your local environment, follow thes
    cd psa-projects
    ```
 
-2. Install dependencies and build the project:
+2. Create a docker network:
+
+   ```bash
+   docker network create psa-network
+   ```
+
+3. Install dependencies and build the project:
 
    ```bash
    ./gradlew build
    ```
 
-3. Start the Spring Boot application:
+4. Start the Spring Boot application:
 
    ```bash
    ./gradlew bootRun
@@ -60,18 +66,18 @@ support.api.url=${API_SUPPORT_URL:http://localhost:8081}
 
 ### Projects
 
-- **Get all projects**: `GET /api/projects`
-- **Get a project by ID**: `GET /api/projects/{id}`
-- **Create a new project**: `POST /api/projects`
-- **Update a project**: `PUT /api/projects/{id}`
-- **Delete a project**: `DELETE /api/projects/{id}`
+- **Get all projects**: `GET /projects`
+- **Get a project by ID**: `GET /projects/{id}`
+- **Create a new project**: `POST /projects`
+- **Update a project**: `PUT /projects/{id}`
+- **Delete a project**: `DELETE /projects/{id}`
 
 ### Example Requests
 
 - **Create a Project**
 
   ```bash
-  curl -X POST http://localhost:8080/api/projects \
+  curl -X POST http://localhost:8080/projects \
   -H "Content-Type: application/json" \
   -d '{"name": "New Project", "type": "Development"}'
   ```
