@@ -1,0 +1,19 @@
+{
+  "owners": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "petId": 1
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith",
+      "petId": 2
+    },
+    {
+      "id": null,
+      "name": "Joe Doe",
+      "petId": 1
+    }
+  ]
+}

@@ -77,4 +77,19 @@ public class PetController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
+
+	@PostMapping("/{id}/adopt")
+	@Operation(summary = "Adopt a pet")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "Pet adopted successfully"),
+			@ApiResponse(responseCode = "404", description = "Pet not found")
+	})
+	public ResponseEntity<Pet> adoptPet(@PathVariable Long id, @RequestParam String ownerName) {
+		try {
+			Pet adoptedPet = petService.adoptPet(id, ownerName);
+			return ResponseEntity.ok(adoptedPet);
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
 }
