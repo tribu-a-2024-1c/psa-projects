@@ -1,7 +1,7 @@
 services:
   mysql:
     image: 'mysql:8.0.36'
-    container_name: 'mysql'
+    container_name: 'mysql-projects'
     restart: 'always'
     environment:
       - 'MYSQL_ROOT_PASSWORD=projects'
@@ -11,12 +11,12 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - 'db-data:/var/lib/mysql'
+      - 'db-data-projects:/var/lib/mysql'
     networks:
       - 'psa-network'
 
 volumes:
-  db-data: { }
+  db-data-projects: { }
 
 networks:
     psa-network:
