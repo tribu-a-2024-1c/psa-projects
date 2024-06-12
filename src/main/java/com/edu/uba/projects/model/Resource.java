@@ -25,9 +25,7 @@ public class Resource {
     private String address;
 
     @Column(name = "telefono")
-    // int está ok?
-    // phone_number sería mejor?
-    private Long phone;
+    private String phone;
 
     @ManyToOne
     @JoinColumn(name="proyecto_id", nullable=false)
