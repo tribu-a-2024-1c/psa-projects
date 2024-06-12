@@ -3,6 +3,7 @@ package com.edu.uba.projects.controller;
 import com.edu.uba.projects.dto.CreateProjectDto;
 import com.edu.uba.projects.model.Project;
 import com.edu.uba.projects.model.Task;
+import com.edu.uba.projects.model.Resource;
 import com.edu.uba.projects.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -57,5 +58,18 @@ public class ProjectController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/{projectId}/resources")
+    @Operation(summary = "Get all resources of a project")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Resources found"),
+            @ApiResponse(responseCode = "404", description = "Project not found")
+    })
+    public ResponseEntity<List<Resource>> getResources(@PathVariable Long projectId) {
+        Optional<Project> project = projectService.getProject(projectId);
+        if (project.isPresent()) {
+            return ResponseEntity.ok(projectService.getResources(project.get()));
+        }
+        return ResponseEntity.notFound().build();
+    }
 
 }
