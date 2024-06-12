@@ -2,6 +2,7 @@ package com.edu.uba.projects.controller;
 
 import com.edu.uba.projects.dto.CreateProjectDto;
 import com.edu.uba.projects.model.Project;
+import com.edu.uba.projects.model.Task;
 import com.edu.uba.projects.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,6 +41,20 @@ public class ProjectController {
     public ResponseEntity<Project> createProject(@RequestBody CreateProjectDto projectDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(projectDto));
 
+    }
+    
+    @GetMapping("/{projectId}/tasks")
+    @Operation(summary = "Get all tasks of a project")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tasks found"),
+            @ApiResponse(responseCode = "404", description = "Project not found")
+    })
+    public ResponseEntity<List<Task>> getTasks(@PathVariable Long projectId) {
+        Optional<Project> project = projectService.getProject(projectId);
+        if (project.isPresent()) {
+            return ResponseEntity.ok(projectService.getTasks(project.get()));
+        }
+        return ResponseEntity.notFound().build();
     }
 
 
