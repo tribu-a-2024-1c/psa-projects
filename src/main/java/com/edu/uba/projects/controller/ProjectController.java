@@ -1,5 +1,6 @@
 package com.edu.uba.projects.controller;
 
+import com.edu.uba.projects.dto.CreateProjectDto;
 import com.edu.uba.projects.model.Project;
 import com.edu.uba.projects.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,4 +30,17 @@ public class ProjectController {
     public ResponseEntity<List<Project>> getProjects() {
         return ResponseEntity.ok(projectService.getAllProjects());
     }
+
+    @PostMapping
+    @Operation(summary = "Create a new project")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Pet created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invilid input")
+    })
+    public ResponseEntity<Project> createProject(@RequestBody CreateProjectDto projectDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(projectDto));
+
+    }
+
+
 }
