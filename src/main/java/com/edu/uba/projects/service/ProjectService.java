@@ -7,10 +7,12 @@ import com.edu.uba.projects.model.Client;
 import com.edu.uba.projects.model.Product;
 import com.edu.uba.projects.model.Project;
 import com.edu.uba.projects.model.Task;
+import com.edu.uba.projects.model.Resource;
 import com.edu.uba.projects.repository.ClientRepository;
 import com.edu.uba.projects.repository.ProductRepository;
 import com.edu.uba.projects.repository.ProjectRepository;
 import com.edu.uba.projects.repository.TaskRepository;
+import com.edu.uba.projects.repository.ResourceRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,15 +31,16 @@ public class ProjectService {
     private  final ClientRepository clientRepository;
     private  final ProductRepository productRepository;
     private final TaskRepository taskRepository;
+    private final ResourceRepository resourceRepository;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, ClientRepository clientRepository, ProductRepository productRepository, TaskRepository taskRepository) {
+    public ProjectService(ProjectRepository projectRepository, ClientRepository clientRepository, ProductRepository productRepository, TaskRepository taskRepository, ResourceRepository resourceRepository) {
         this.projectRepository = projectRepository;
         this.clientRepository = clientRepository;
         this.productRepository = productRepository;
         this.taskRepository = taskRepository;
+        this.resourceRepository = resourceRepository;
     }
-
 
     public List<Project> getAllProjects() {
         return projectRepository.findAll();
@@ -67,12 +70,14 @@ public class ProjectService {
     
     public Optional<Project> getProject(Long projectId){
         return projectRepository.findById(projectId);
-                
     }
 
     public List<Task> getTasks(Project project){
         return taskRepository.findByProject(project);
-        
+    }
+
+    public List<Resource> getResources(Project project){
+        return resourceRepository.findByProject(project);
     }
 
 }
