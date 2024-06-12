@@ -6,9 +6,12 @@ import com.edu.uba.projects.dto.CreateProjectDto;
 import com.edu.uba.projects.model.Client;
 import com.edu.uba.projects.model.Product;
 import com.edu.uba.projects.model.Project;
+import com.edu.uba.projects.model.Task;
 import com.edu.uba.projects.repository.ClientRepository;
 import com.edu.uba.projects.repository.ProductRepository;
 import com.edu.uba.projects.repository.ProjectRepository;
+import com.edu.uba.projects.repository.TaskRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
@@ -25,12 +28,14 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private  final ClientRepository clientRepository;
     private  final ProductRepository productRepository;
+    private final TaskRepository taskRepository;
 
     @Autowired
-    public ProjectService(ProjectRepository projectRepository, ClientRepository clientRepository, ProductRepository productRepository) {
+    public ProjectService(ProjectRepository projectRepository, ClientRepository clientRepository, ProductRepository productRepository, TaskRepository taskRepository) {
         this.projectRepository = projectRepository;
         this.clientRepository = clientRepository;
         this.productRepository = productRepository;
+        this.taskRepository = taskRepository;
     }
 
 
@@ -58,6 +63,16 @@ public class ProjectService {
         project.setProduct(product);
 
         return projectRepository.save(project);
+    }
+    
+    public Optional<Project> getProject(Long projectId){
+        return projectRepository.findById(projectId);
+                
+    }
+
+    public List<Task> getTasks(Project project){
+        return taskRepository.findByProject(project);
+        
     }
 
 }
