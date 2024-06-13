@@ -71,9 +71,8 @@ public class ProjectService {
         return projectRepository.findById(projectId);
     }
 
-    /// create a task in a project
+ 
     public Task createTask(Long projectId, CreateTaskDto createTaskDto){
-        
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
         Task newTask = new Task();
@@ -84,14 +83,9 @@ public class ProjectService {
         newTask.setStatus(createTaskDto.getStatus());
         newTask.setEstimation(createTaskDto.getEstimation());
         newTask.setProject(project);
-
         project.getTasks().add(newTask);
         projectRepository.save(project);
-
-
         return taskRepository.save(newTask);
-
-    
     }
 
     public List<Task> getTasks(Project project){

@@ -55,7 +55,8 @@ public class Project {
     @JoinColumn(name = "producto_id")
     private Product product;
 
-    @OneToMany(mappedBy = "proyecto")
+    @OneToMany(mappedBy = "project")
     private Set<Task> tasks;
+
 
 }
