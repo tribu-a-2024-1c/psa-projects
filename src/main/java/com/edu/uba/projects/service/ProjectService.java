@@ -2,27 +2,25 @@ package com.edu.uba.projects.service;
 
 // import org.slf4j.Logger;
 // import org.slf4j.LoggerFactory;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.edu.uba.projects.dto.CreateProjectDto;
+import com.edu.uba.projects.dto.CreateTaskDto;
 import com.edu.uba.projects.model.Client;
 import com.edu.uba.projects.model.Product;
 import com.edu.uba.projects.model.Project;
-import com.edu.uba.projects.model.Task;
 import com.edu.uba.projects.model.Resource;
+import com.edu.uba.projects.model.Task;
 import com.edu.uba.projects.repository.ClientRepository;
 import com.edu.uba.projects.repository.ProductRepository;
 import com.edu.uba.projects.repository.ProjectRepository;
-import com.edu.uba.projects.repository.TaskRepository;
 import com.edu.uba.projects.repository.ResourceRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
+import com.edu.uba.projects.repository.TaskRepository;
 
 @Service
 public class ProjectService {
@@ -54,7 +52,7 @@ public class ProjectService {
         project.setEndDate(createProjectDto.getEndDate());
         project.setStatus(createProjectDto.getStatus());
         project.setDescription(createProjectDto.getDescription());
-
+        project.setTasks(new HashSet<>());
         // Buscar y asignar la entidad Client a partir del ID proporcionado en el DTO
         // TODO: @vgutierrezz comentaba que un proyecto en un principio puede no tener cliente asignado, revisar.
         Client client = clientRepository.findById(createProjectDto.getClientId())
@@ -71,6 +69,29 @@ public class ProjectService {
 
     public Optional<Project> getProject(Long projectId){
         return projectRepository.findById(projectId);
+    }
+
+    /// create a task in a project
+    public Task createTask(Long projectId, CreateTaskDto createTaskDto){
+        
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
+        Task newTask = new Task();
+        newTask.setTitle(createTaskDto.getTitle());
+        newTask.setDescription(createTaskDto.getDescription());
+        newTask.setStartDate(createTaskDto.getStartDate());
+        newTask.setEndDate(createTaskDto.getEndDate());
+        newTask.setStatus(createTaskDto.getStatus());
+        newTask.setEstimation(createTaskDto.getEstimation());
+        newTask.setProject(project);
+
+        project.getTasks().add(newTask);
+        projectRepository.save(project);
+
+
+        return taskRepository.save(newTask);
+
+    
     }
 
     public List<Task> getTasks(Project project){
