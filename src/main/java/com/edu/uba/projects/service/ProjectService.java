@@ -56,6 +56,7 @@ public class ProjectService {
         project.setDescription(createProjectDto.getDescription());
 
         // Buscar y asignar la entidad Client a partir del ID proporcionado en el DTO
+        // TODO: @vgutierrezz comentaba que un proyecto en un principio puede no tener cliente asignado, revisar.
         Client client = clientRepository.findById(createProjectDto.getClientId())
                 .orElseThrow(() -> new RuntimeException("Client not found with id: " + createProjectDto.getClientId()));
         project.setClient(client);
@@ -67,7 +68,7 @@ public class ProjectService {
 
         return projectRepository.save(project);
     }
-    
+
     public Optional<Project> getProject(Long projectId){
         return projectRepository.findById(projectId);
     }

@@ -6,14 +6,15 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
-@Table(name = "Project")
+@Table(name = "proyecto")
 public class Project {
-    
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -34,7 +35,8 @@ public class Project {
 
     @ToString.Exclude // to avoid stackoverflow error due to circular reference when printing the object
     @JsonBackReference // to avoid infinite recursion when serializing the object
-    @ManyToOne
+    @ManyToOne // un proyecto tiene un solo cliente, un cliente puede tener varios proyectos
+    // un proyecto NO puede tener varios clientes (ManyToMany)
     @JoinColumn(name = "cliente_id")
     private Client client;
 
