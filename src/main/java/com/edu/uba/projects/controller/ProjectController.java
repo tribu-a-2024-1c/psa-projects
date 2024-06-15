@@ -67,6 +67,7 @@ public class ProjectController {
     }
 
     // POST /projects/{projectId}/tasks crear una nueva tarea en un projecto
+
     @PostMapping("/{projectId}/tasks")
     @Operation(summary = "Create a new task in a project")
     @ApiResponses({
@@ -74,11 +75,11 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found")
     })
     public ResponseEntity<Task> createTask(@PathVariable Long projectId, @RequestBody CreateTaskDto taskDto) {
-        Optional<Project> project = projectService.getProject(projectId);
-        if (project.isPresent()) {
+        try {
             return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createTask(projectId, taskDto));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{projectId}/resources")

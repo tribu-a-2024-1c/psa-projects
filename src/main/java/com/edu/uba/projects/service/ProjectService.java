@@ -73,6 +73,11 @@ public class ProjectService {
 
  
     public Task createTask(Long projectId, CreateTaskDto createTaskDto){
+        // Si a este nivel, si no encontras un proyectol lanzas una expecion, no deberias entonces en el controlador buscarlo tambien
+        // Optional project = projectService.getProject(projectId);
+        // if (project.isPresent()) ...
+        // Sino que deberias atrapar la excepcion y en base a eso retornar el notfound
+        
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
         Task newTask = new Task();
