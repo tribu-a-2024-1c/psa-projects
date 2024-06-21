@@ -51,7 +51,7 @@ public class Task {
     private Project project;
 
      @ManyToOne
-     @JoinColumn(name="recurso_id", nullable=false)
+     @JoinColumn(name="recurso_id")
      @JsonBackReference // to avoid infinite recursion when serializing the object
      private Resource resource;
 }

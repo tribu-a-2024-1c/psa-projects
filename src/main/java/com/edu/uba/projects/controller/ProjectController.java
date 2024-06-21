@@ -78,6 +78,7 @@ public class ProjectController {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createTask(projectId, taskDto));
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -95,7 +96,7 @@ public class ProjectController {
         }
         return ResponseEntity.notFound().build();
     }
-    @GetMapping("/projects/tasks")
+    @GetMapping("/tasks")
     @Operation(summary = "Get all tasks across all projects")
     public ResponseEntity<List<Task>> getAllTasks() {
         return ResponseEntity.ok(projectService.getAllTasks());

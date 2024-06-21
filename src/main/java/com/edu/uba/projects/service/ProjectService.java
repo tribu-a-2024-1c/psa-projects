@@ -73,6 +73,7 @@ public class ProjectService {
         newTask.setEstimation(createTaskDto.getEstimation());
         newTask.setProject(project);
         project.getTasks().add(newTask);
+        System.out.println(newTask);
         projectRepository.save(project);
         return taskRepository.save(newTask);
     }
