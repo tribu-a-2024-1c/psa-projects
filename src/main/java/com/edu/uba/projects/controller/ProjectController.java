@@ -96,4 +96,15 @@ public class ProjectController {
         return ResponseEntity.notFound().build();
     }
 
+    // @GetMapping("/{projectId}/tasks/{taskId}/resource")
+    // 1. asignar un recurso a una tarea que no tiene asignado un recurso 
+       // (#27)
+       // b. si la tarea tiene asignada un recurso delegarselo a otro (quitárselo al anterior)
+    // 2. crear una tarea que por defecto no tiene asignado un recurso
+       // (#18? lo hizo rebe). Editar para que se pueda crear sin un recurso asignado
+    // 3. verificar si al crear una tarea del punto 2 necesita estar asociado a un proyecto
+    //    las tareas se crean dentro de un proyecto pero se pueden crear. OK
+    // 4. obtener las tareas asociadas a un recurso
+    // 5. obtener las tareas asociadas a un proyecto
+
 }

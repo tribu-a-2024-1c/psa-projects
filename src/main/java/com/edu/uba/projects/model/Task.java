@@ -1,6 +1,5 @@
 package com.edu.uba.projects.model;
 
-
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -10,11 +9,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
-
-
-
 
 @Data
 @Entity
@@ -52,6 +49,8 @@ public class Task {
     @JoinColumn(name="proyecto_id", nullable=false)
     private Project project;
 
-   }
+    // @OneToMany
+    // @Column(name = 'recurso')
+    // private Resource resource;
 
-   
+}

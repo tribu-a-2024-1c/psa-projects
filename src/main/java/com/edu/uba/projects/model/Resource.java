@@ -1,5 +1,6 @@
 package com.edu.uba.projects.model;
 
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,9 +11,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
-
-
-
 
 @Data
 @Entity
@@ -36,4 +34,9 @@ public class Resource {
     @ManyToOne
     @JoinColumn(name="proyecto_id", nullable=false)
     private Project project;
+
+    @ManyToOne
+    @Column(name = 'tarea')
+    private Set<Task> task;
+
 }
