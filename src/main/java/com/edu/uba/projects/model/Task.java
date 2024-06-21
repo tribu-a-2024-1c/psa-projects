@@ -49,8 +49,8 @@ public class Task {
     @JoinColumn(name="proyecto_id", nullable=false)
     private Project project;
 
-    // @OneToMany
-    // @Column(name = 'recurso')
-    // private Resource resource;
+     @ManyToOne
+     @Column(name = "recurso")
+     private Resource resource;
 
 }
