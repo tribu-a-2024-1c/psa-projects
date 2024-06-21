@@ -2,6 +2,7 @@ package com.edu.uba.projects.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -47,9 +48,11 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name="proyecto_id", nullable=false)
+    @JsonBackReference // to avoid infinite recursion when serializing the object
     private Project project;
 
      @ManyToOne
      @JoinColumn(name="recurso_id", nullable=false)
+     @JsonBackReference // to avoid infinite recursion when serializing the object
      private Resource resource;
 }

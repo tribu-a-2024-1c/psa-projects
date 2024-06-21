@@ -2,6 +2,7 @@ package com.edu.uba.projects.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -30,6 +31,7 @@ public class Resource {
 
     @OneToMany
     @Column(name = "tarea")
+    @JsonManagedReference // to avoid infinite recursion when serializing the object
     private Set<Task> task;
 
 }

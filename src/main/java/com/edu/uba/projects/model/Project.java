@@ -43,6 +43,7 @@ public class Project {
     private String description;
 
     @OneToMany(mappedBy = "project")
+    @JsonBackReference // to avoid infinite recursion when serializing the object
     private Set<Task> tasks;
 
 }
