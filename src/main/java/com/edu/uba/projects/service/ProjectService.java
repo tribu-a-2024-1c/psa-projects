@@ -5,6 +5,7 @@ package com.edu.uba.projects.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import com.edu.uba.projects.model.Task;
 import com.edu.uba.projects.repository.ProjectRepository;
 import com.edu.uba.projects.repository.ResourceRepository;
 import com.edu.uba.projects.repository.TaskRepository;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Service
 public class ProjectService {
@@ -53,13 +55,13 @@ public class ProjectService {
         return projectRepository.findById(projectId);
     }
 
- 
+
     public Task createTask(Long projectId, CreateTaskDto createTaskDto){
         // Si a este nivel, si no encontras un proyectol lanzas una expecion, no deberias entonces en el controlador buscarlo tambien
         // Optional project = projectService.getProject(projectId);
         // if (project.isPresent()) ...
         // Sino que deberias atrapar la excepcion y en base a eso retornar el notfound
-        
+
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
         Task newTask = new Task();
@@ -83,5 +85,10 @@ public class ProjectService {
         return resourceRepository.findByProject(project);
     }
 
+    public List<Task> getAllTasks() {
+        return projectRepository.findAll().stream()
+            .flatMap(project -> project.getTasks().stream())
+            .collect(Collectors.toList());
+    }
 }
 

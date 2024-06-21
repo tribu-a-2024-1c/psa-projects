@@ -48,7 +48,6 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name="proyecto_id", nullable=false)
-    @JsonBackReference // to avoid infinite recursion when serializing the object
     private Project project;
 
      @ManyToOne

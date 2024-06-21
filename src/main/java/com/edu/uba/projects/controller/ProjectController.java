@@ -51,7 +51,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(projectDto));
 
     }
-    
+
     @GetMapping("/{projectId}/tasks")
     @Operation(summary = "Get all tasks of a project")
     @ApiResponses({
@@ -95,9 +95,14 @@ public class ProjectController {
         }
         return ResponseEntity.notFound().build();
     }
+    @GetMapping("/projects/tasks")
+    @Operation(summary = "Get all tasks across all projects")
+    public ResponseEntity<List<Task>> getAllTasks() {
+        return ResponseEntity.ok(projectService.getAllTasks());
+    }
 
     // @GetMapping("/{projectId}/tasks/{taskId}/resource")
-    // 1. asignar un recurso a una tarea que no tiene asignado un recurso 
+    // 1. asignar un recurso a una tarea que no tiene asignado un recurso
        // (#27)
        // b. si la tarea tiene asignada un recurso delegarselo a otro (quitárselo al anterior)
     // 2. crear una tarea que por defecto no tiene asignado un recurso
