@@ -16,5 +16,4 @@ public class CreateProjectDto {
     private Date endDate;
     private String status;
     private String description;
-    private Long productId;
 }
