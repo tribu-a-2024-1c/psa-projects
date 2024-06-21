@@ -50,7 +50,6 @@ public class Task {
     private Project project;
 
      @ManyToOne
-     @Column(name = "recurso")
+     @JoinColumn(name="recurso_id", nullable=false)
      private Resource resource;
-
 }
