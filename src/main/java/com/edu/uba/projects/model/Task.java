@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -47,11 +48,13 @@ public class Task {
     // private Project project;
 
     @ManyToOne
+    @ToString.Exclude // to avoid stackoverflow error due to circular reference when printing the object
     @JoinColumn(name="proyecto_id", nullable=false)
     private Project project;
 
      @ManyToOne
-     @JoinColumn(name="recurso_id")
+     @JoinColumn(name="recurso_id", nullable=true)
+     @ToString.Exclude // to avoid stackoverflow error due to circular reference when printing the object
      @JsonBackReference // to avoid infinite recursion when serializing the object
      private Resource resource;
 }

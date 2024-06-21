@@ -64,6 +64,8 @@ public class ProjectService {
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
+        System.out.println("Project found: " + project);
+        System.out.println("CreateTaskDto: " + createTaskDto);
         Task newTask = new Task();
         newTask.setTitle(createTaskDto.getTitle());
         newTask.setDescription(createTaskDto.getDescription());
