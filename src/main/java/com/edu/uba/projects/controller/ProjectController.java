@@ -76,7 +76,8 @@ public class ProjectController {
     })
     public ResponseEntity<Task> createTask(@PathVariable Long projectId, @RequestBody CreateTaskDto taskDto) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createTask(projectId, taskDto));
+            Task newTask = projectService.createTask(projectId, taskDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newTask);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.notFound().build();

@@ -2,6 +2,7 @@ package com.edu.uba.projects.model;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -29,9 +30,7 @@ public class Resource {
     @JoinColumn(name="proyecto_id", nullable=false)
     private Project project;
 
-    @OneToMany
-    @Column(name = "tarea")
+    @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // to avoid infinite recursion when serializing the object
-    private Set<Task> task;
-
+    private Set<Task> tasks;
 }

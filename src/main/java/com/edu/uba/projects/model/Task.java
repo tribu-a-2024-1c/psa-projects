@@ -53,8 +53,7 @@ public class Task {
     private Project project;
 
      @ManyToOne
-     @JoinColumn(name="recurso_id", nullable=true)
+     @JoinColumn(name="recurso_id")
      @ToString.Exclude // to avoid stackoverflow error due to circular reference when printing the object
-     @JsonBackReference // to avoid infinite recursion when serializing the object
      private Resource resource;
 }
