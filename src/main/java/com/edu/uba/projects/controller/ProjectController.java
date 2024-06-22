@@ -51,7 +51,7 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(projectDto));
 
     }
-    
+
     @GetMapping("/{projectId}/tasks")
     @Operation(summary = "Get all tasks of a project")
     @ApiResponses({
@@ -76,8 +76,10 @@ public class ProjectController {
     })
     public ResponseEntity<Task> createTask(@PathVariable Long projectId, @RequestBody CreateTaskDto taskDto) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createTask(projectId, taskDto));
+            Task newTask = projectService.createTask(projectId, taskDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newTask);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -95,5 +97,21 @@ public class ProjectController {
         }
         return ResponseEntity.notFound().build();
     }
+    @GetMapping("/tasks")
+    @Operation(summary = "Get all tasks across all projects")
+    public ResponseEntity<List<Task>> getAllTasks() {
+        return ResponseEntity.ok(projectService.getAllTasks());
+    }
+
+    // @GetMapping("/{projectId}/tasks/{taskId}/resource")
+    // 1. asignar un recurso a una tarea que no tiene asignado un recurso
+       // (#27)
+       // b. si la tarea tiene asignada un recurso delegarselo a otro (quitárselo al anterior)
+    // 2. crear una tarea que por defecto no tiene asignado un recurso
+       // (#18? lo hizo rebe). Editar para que se pueda crear sin un recurso asignado
+    // 3. verificar si al crear una tarea del punto 2 necesita estar asociado a un proyecto
+    //    las tareas se crean dentro de un proyecto pero se pueden crear. OK
+    // 4. obtener las tareas asociadas a un recurso
+    // 5. obtener las tareas asociadas a un proyecto
 
 }

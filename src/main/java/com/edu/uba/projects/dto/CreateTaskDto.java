@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateTaskDto {
-    private Long id;
     private String title;
     private Date startDate;
     private Date endDate;
