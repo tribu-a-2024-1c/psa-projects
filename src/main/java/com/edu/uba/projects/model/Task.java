@@ -44,10 +44,6 @@ public class Task {
     @Column(name = "descripcion")
     private String description;
 
-    // @ManyToOne
-    // @JoinColumn(name = "proyecto_id", nullable=false)
-    // private Project project;
-
     @ManyToOne
     @JoinColumn(name="proyecto_id", nullable=false)
     private Project project;
