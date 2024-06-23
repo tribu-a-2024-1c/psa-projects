@@ -1,6 +1,7 @@
 package com.edu.uba.projects.model;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -43,4 +44,17 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference // to avoid infinite recursion when serializing the object
     private Set<Task> tasks;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Project project = (Project) o;
+        return Objects.equals(id, project.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }

@@ -125,13 +125,14 @@ public class ProjectService {
     if (task.getResource() != null) {
       /// remove the task from the previous resource
       task.getResource().getTasks().remove(task);
-    } 
+    }
+
     resource.getTasks().add(task);
     Resource newResource = resourceRepository.save(resource);
     try {
-      task.setResource(newResource);
-      taskRepository.save(task);
-      
+    task.setResource(newResource);
+    taskRepository.save(task);
+
     } catch (Exception e) {
       System.out.println("Error saving task: " + e.getMessage());
       throw new RuntimeException("Error saving task: " + e.getMessage());
@@ -186,5 +187,5 @@ public class ProjectService {
 //         return null;
 //     }
 // }
-  
+
 }

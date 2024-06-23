@@ -1,6 +1,7 @@
 package com.edu.uba.projects.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,4 +51,17 @@ public class Task {
     @ToString.Exclude // to avoid stackoverflow error due to circular reference when printing the object
     @JoinColumn(name="recurso_id")
     private Resource resource;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return Objects.equals(id, task.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
