@@ -10,6 +10,4 @@ import com.edu.uba.projects.model.Resource;
 
 @Repository
 public interface ResourceRepository extends JpaRepository<Resource, Long> {
-
-    public List<Resource> findByProject(Project project);
 }

@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.edu.uba.projects.dto.AssignResourceDto;
 import com.edu.uba.projects.dto.CreateProjectDto;
 import com.edu.uba.projects.dto.CreateTaskDto;
 import com.edu.uba.projects.model.Project;
@@ -66,7 +68,7 @@ public class ProjectController {
         return ResponseEntity.notFound().build();
     }
 
-    // POST /projects/{projectId}/tasks crear una nueva tarea en un projecto
+
 
     @PostMapping("/{projectId}/tasks")
     @Operation(summary = "Create a new task in a project")
@@ -97,6 +99,9 @@ public class ProjectController {
         }
         return ResponseEntity.notFound().build();
     }
+
+
+    
     @GetMapping("/tasks")
     @Operation(summary = "Get all tasks across all projects")
     public ResponseEntity<List<Task>> getAllTasks() {
@@ -111,7 +116,55 @@ public class ProjectController {
        // (#18? lo hizo rebe). Editar para que se pueda crear sin un recurso asignado
     // 3. verificar si al crear una tarea del punto 2 necesita estar asociado a un proyecto
     //    las tareas se crean dentro de un proyecto pero se pueden crear. OK
-    // 4. obtener las tareas asociadas a un recurso
-    // 5. obtener las tareas asociadas a un proyecto
+    // 4. obtener las tareas asociadas a un recurso OK
+    // 5. obtener las tareas asociadas a un proyecto OK
+
+    /// Assign a resource to a task
+    @PostMapping("/tasks/{taskId}/resource")
+    @Operation(summary = "Assign a resource to a task")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Resource assigned to task"),
+            @ApiResponse(responseCode = "404", description = "Project or task not found")
+    })
+    public ResponseEntity<Resource> assignResourceToTask(@PathVariable Long taskId, @RequestBody AssignResourceDto resourceDto) {
+        Optional<Task> task = projectService.getTask(taskId);
+        if (!task.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        try {
+            Resource newResource = projectService.assignResourceToTask(task.get(), resourceDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newResource);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage()); 
+        }
+    }
+   
+    
+    // Obtain all tasks associated to a resource
+    @GetMapping("/resources/{resourceId}/tasks")
+    @Operation(summary = "Get all tasks associated to a resource")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tasks found"),
+            @ApiResponse(responseCode = "404", description = "Resource not found")
+    })
+    
+    public ResponseEntity<List<Task>> getTasksByResource(@PathVariable Long resourceId) {
+        Optional<Resource> resource = projectService.getResource(resourceId);
+        if (!resource.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            return ResponseEntity.ok(projectService.getTasks(resource.get()));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        
+
+    }
+
 
 }
+
