@@ -68,8 +68,14 @@ public class ProjectService {
     newTask.setStatus(createTaskDto.getStatus());
     newTask.setEstimation(createTaskDto.getEstimation());
     newTask.setProject(project);
-    // asign no resource to the task
-    //newTask.setResource(null);
+    if (createTaskDto.getRecurso() != null) {
+      Resource resource = new Resource();
+      resource.setId(createTaskDto.getRecurso().getLegajo());
+      resource.setName(createTaskDto.getRecurso().getNombre());
+      resource.setLastName(createTaskDto.getRecurso().getApellido());
+      newTask.setResource(resource);
+      resourceRepository.save(resource);
+    }
 
     // save the task
     Task savedTask = taskRepository.save(newTask);
@@ -121,8 +127,6 @@ public class ProjectService {
   public Resource assignResourceToTask(Task task, AssignResourceDto resourceDto) {
     Resource resource = new Resource();
     resource.setName(resourceDto.getName());
-    resource.setAddress(resourceDto.getAddress());
-    resource.setPhone(resourceDto.getPhone());
     resource.setTasks(new HashSet<>());
     // set tasks
     if (task.getResource() != null) {
@@ -141,6 +145,27 @@ public class ProjectService {
       throw new RuntimeException("Error saving task: " + e.getMessage());
     }
     return newResource;
+  }
+  public Task updateTask(Task existingTask, CreateTaskDto taskDto) {
+    existingTask.setTitle(taskDto.getTitle());
+    existingTask.setDescription(taskDto.getDescription());
+    existingTask.setStartDate(taskDto.getStartDate());
+    existingTask.setEndDate(taskDto.getEndDate());
+    existingTask.setStatus(taskDto.getStatus());
+    existingTask.setEstimation(taskDto.getEstimation());
+
+    // Set the resource
+    if (taskDto.getRecurso() != null) {
+      Resource resource = new Resource();
+      resource.setId(taskDto.getRecurso().getLegajo());
+      resource.setName(taskDto.getRecurso().getNombre());
+      resource.setLastName(taskDto.getRecurso().getApellido());
+      existingTask.setResource(resource);
+      resourceRepository.save(resource);
+    }
+
+    // Save the updated task
+    return taskRepository.save(existingTask);
   }
 
 

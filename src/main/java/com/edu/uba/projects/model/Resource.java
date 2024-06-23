@@ -25,18 +25,14 @@ import lombok.Data;
 public class Resource {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
 	@Column(name = "nombre")
 	private String name;
 
-	@Column(name = "direccion")
-	private String address;
-
-	@Column(name = "telefono")
-	private String phone;
+	@Column(name = "apellido")
+	private String lastName;
 
 	@OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference // to avoid infinite recursion when serializing the object
