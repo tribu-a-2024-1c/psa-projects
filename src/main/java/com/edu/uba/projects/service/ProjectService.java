@@ -182,6 +182,7 @@ public class ProjectService {
 
       // Add task to new resource
       resource.addTask(existingTask);
+      existingTask.setResource(resource);
     } else {
       // Remove task from old resource if exists and new resource is not provided
       if (existingTask.getResource() != null) {
@@ -193,6 +194,7 @@ public class ProjectService {
     // Save the updated task
     return taskRepository.save(existingTask);
   }
+
 
 
 

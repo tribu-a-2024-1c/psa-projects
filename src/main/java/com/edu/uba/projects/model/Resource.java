@@ -29,7 +29,7 @@ public class Resource {
 	@Column(name = "apellido")
 	private String lastName;
 
-	@OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "resource", cascade = CascadeType.ALL)
 	@JsonManagedReference // to avoid infinite recursion when serializing the object
 	@JsonIgnoreProperties({"resource", "project"})
 	private Set<Task> tasks = new HashSet<>();
