@@ -54,7 +54,7 @@ public class Task {
 
     @ManyToOne
     @ToString.Exclude  // to avoid stackoverflow error due to circular reference when printing the object
-    @JoinColumn(name="ticket_id", nullable=false)
+    @JoinColumn(name="ticket_id")
     private Ticket ticket;
 
     @Override
