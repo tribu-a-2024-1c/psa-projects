@@ -44,6 +44,7 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference // to avoid infinite recursion when serializing the object
     private Set<Task> tasks;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
