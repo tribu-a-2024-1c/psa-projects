@@ -24,39 +24,35 @@ import lombok.Data;
 @Table(name = "recurso")
 public class Resource {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long id;
 
-    @Column(name = "nombre")
-    private String name;
+	@Column(name = "nombre")
+	private String name;
 
-    @Column(name = "direccion")
-    private String address;
+	@Column(name = "direccion")
+	private String address;
 
-    @Column(name = "telefono")
-    private String phone;
+	@Column(name = "telefono")
+	private String phone;
 
-    @ManyToOne
-    @JoinColumn(name="proyecto_id", nullable=false)
-    private Project project;
+	@OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonManagedReference // to avoid infinite recursion when serializing the object
+	@JsonIgnoreProperties({"resource", "project"})
+	private Set<Task> tasks;
 
-    @OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference // to avoid infinite recursion when serializing the object
-    @JsonIgnoreProperties("resource")
-    private Set<Task> tasks;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Resource resource = (Resource) o;
+		return Objects.equals(id, resource.id);
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Resource resource = (Resource) o;
-        return Objects.equals(id, resource.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }

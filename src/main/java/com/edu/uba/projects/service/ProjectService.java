@@ -1,8 +1,7 @@
 package com.edu.uba.projects.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.edu.uba.projects.model.Resource;
 
@@ -103,8 +102,13 @@ public class ProjectService {
 
 
   /// get resources by project
-  public List<Resource> getResources(Project project){
-    return resourceRepository.findByProject(project);
+  public List<Resource> getResources(Project project) {
+    Set<Task> tasks = project.getTasks();
+    return tasks.stream()
+        .map(Task::getResource)
+        .filter(Objects::nonNull)
+        .distinct()
+        .collect(Collectors.toList());
   }
 
 
@@ -119,7 +123,6 @@ public class ProjectService {
     resource.setName(resourceDto.getName());
     resource.setAddress(resourceDto.getAddress());
     resource.setPhone(resourceDto.getPhone());
-    resource.setProject(task.getProject());
     resource.setTasks(new HashSet<>());
     // set tasks
     if (task.getResource() != null) {
