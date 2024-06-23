@@ -70,21 +70,17 @@ public class ProjectService {
     newTask.setProject(project);
 
     if (createTaskDto.getRecurso() != null) {
-      Resource resource;
-      Optional<Resource> existingResource = resourceRepository.findById(createTaskDto.getRecurso().getLegajo());
-      if (existingResource.isPresent()) {
-        resource = existingResource.get();
-      } else {
-        resource = new Resource();
-        resource.setId(createTaskDto.getRecurso().getLegajo());
-        resource.setName(createTaskDto.getRecurso().getNombre());
-        resource.setLastName(createTaskDto.getRecurso().getApellido());
-        resource.setTasks(new HashSet<>());
-        resource = resourceRepository.save(resource);
-      }
+      Resource resource = resourceRepository.findById(createTaskDto.getRecurso().getLegajo())
+          .orElseGet(() -> {
+            Resource newResource = new Resource();
+            newResource.setId(createTaskDto.getRecurso().getLegajo());
+            newResource.setName(createTaskDto.getRecurso().getNombre());
+            newResource.setLastName(createTaskDto.getRecurso().getApellido());
+            newResource.setTasks(new HashSet<>());
+            return resourceRepository.save(newResource);
+          });
       resource.getTasks().add(newTask);
       newTask.setResource(resource);
-      resourceRepository.save(resource);
     }
 
     // save the task
@@ -95,6 +91,7 @@ public class ProjectService {
 
     return savedTask;
   }
+
 
 
   /// get tasks by project
@@ -157,6 +154,7 @@ public class ProjectService {
     }
     return newResource;
   }
+
   public Task updateTask(Task existingTask, CreateTaskDto taskDto) {
     existingTask.setTitle(taskDto.getTitle());
     existingTask.setDescription(taskDto.getDescription());
@@ -167,18 +165,15 @@ public class ProjectService {
 
     // Update the resource if provided
     if (taskDto.getRecurso() != null) {
-      Optional<Resource> optionalResource = resourceRepository.findById(taskDto.getRecurso().getLegajo());
-      Resource resource;
-      if (optionalResource.isPresent()) {
-        resource = optionalResource.get();
-      } else {
-        resource = new Resource();
-        resource.setId(taskDto.getRecurso().getLegajo());
-        resource.setName(taskDto.getRecurso().getNombre());
-        resource.setLastName(taskDto.getRecurso().getApellido());
-        resource.setTasks(new HashSet<>());
-        resource = resourceRepository.save(resource);
-      }
+      Resource resource = resourceRepository.findById(taskDto.getRecurso().getLegajo())
+          .orElseGet(() -> {
+            Resource newResource = new Resource();
+            newResource.setId(taskDto.getRecurso().getLegajo());
+            newResource.setName(taskDto.getRecurso().getNombre());
+            newResource.setLastName(taskDto.getRecurso().getApellido());
+            newResource.setTasks(new HashSet<>());
+            return resourceRepository.save(newResource);
+          });
 
       // Remove task from old resource if exists
       if (existingTask.getResource() != null) {
@@ -199,7 +194,6 @@ public class ProjectService {
     // Save the updated task
     return taskRepository.save(existingTask);
   }
-
 
 
 
