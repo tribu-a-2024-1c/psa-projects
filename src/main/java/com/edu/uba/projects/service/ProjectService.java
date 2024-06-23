@@ -177,16 +177,15 @@ public class ProjectService {
 
       // Remove task from old resource if exists
       if (existingTask.getResource() != null) {
-        existingTask.getResource().getTasks().remove(existingTask);
+        existingTask.getResource().removeTask(existingTask);
       }
 
       // Add task to new resource
-      resource.getTasks().add(existingTask);
-      existingTask.setResource(resource);
+      resource.addTask(existingTask);
     } else {
       // Remove task from old resource if exists and new resource is not provided
       if (existingTask.getResource() != null) {
-        existingTask.getResource().getTasks().remove(existingTask);
+        existingTask.getResource().removeTask(existingTask);
         existingTask.setResource(null);
       }
     }
@@ -194,6 +193,8 @@ public class ProjectService {
     // Save the updated task
     return taskRepository.save(existingTask);
   }
+
+
 
 
 

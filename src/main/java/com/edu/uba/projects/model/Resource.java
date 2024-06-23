@@ -34,6 +34,16 @@ public class Resource {
 	@JsonIgnoreProperties({"resource", "project"})
 	private Set<Task> tasks = new HashSet<>();
 
+	public void addTask(Task task) {
+		tasks.add(task);
+		task.setResource(this);
+	}
+
+	public void removeTask(Task task) {
+		tasks.remove(task);
+		task.setResource(null);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
