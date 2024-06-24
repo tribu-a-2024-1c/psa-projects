@@ -16,7 +16,16 @@ public class CreateTaskDto {
     private String status;
     private String description;
     private int estimation;
-}
+    private Recurso recurso; // Agregado el recurso opcional
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Recurso {
+        private long legajo;
+        private String nombre;
+        private String apellido;
+    }
+}
 
 

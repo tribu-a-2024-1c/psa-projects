@@ -52,6 +52,11 @@ public class Task {
     @JoinColumn(name="recurso_id")
     private Resource resource;
 
+    @ManyToOne
+    @ToString.Exclude  // to avoid stackoverflow error due to circular reference when printing the object
+    @JoinColumn(name="ticket_id")
+    private Ticket ticket;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

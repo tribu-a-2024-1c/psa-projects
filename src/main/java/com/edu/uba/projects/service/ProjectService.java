@@ -68,17 +68,31 @@ public class ProjectService {
     newTask.setStatus(createTaskDto.getStatus());
     newTask.setEstimation(createTaskDto.getEstimation());
     newTask.setProject(project);
-    // asign no resource to the task
-    //newTask.setResource(null);
+
+    if (createTaskDto.getRecurso() != null) {
+      Resource resource = resourceRepository.findById(createTaskDto.getRecurso().getLegajo())
+          .orElseGet(() -> {
+            Resource newResource = new Resource();
+            newResource.setId(createTaskDto.getRecurso().getLegajo());
+            newResource.setName(createTaskDto.getRecurso().getNombre());
+            newResource.setLastName(createTaskDto.getRecurso().getApellido());
+            newResource.setTasks(new HashSet<>());
+            return resourceRepository.save(newResource);
+          });
+      resource.getTasks().add(newTask);
+      newTask.setResource(resource);
+    }
 
     // save the task
     Task savedTask = taskRepository.save(newTask);
 
-    // add the task to the project
+    // add the task to the project's task set
     project.getTasks().add(savedTask);
 
     return savedTask;
   }
+
+
 
   /// get tasks by project
   public List<Task> getTasks(Project project){
@@ -118,30 +132,72 @@ public class ProjectService {
   }
 
   /// assign a resource to a task
-  public Resource assignResourceToTask(Task task, AssignResourceDto resourceDto) {
-    Resource resource = new Resource();
-    resource.setName(resourceDto.getName());
-    resource.setAddress(resourceDto.getAddress());
-    resource.setPhone(resourceDto.getPhone());
-    resource.setTasks(new HashSet<>());
-    // set tasks
-    if (task.getResource() != null) {
-      /// remove the task from the previous resource
-      task.getResource().getTasks().remove(task);
+	public Resource assignResourceToTask(Task task, AssignResourceDto resourceDto) {
+		Resource resource = resourceRepository.findById(resourceDto.getLegajo())
+				.orElseGet(() -> {
+					Resource newResource = new Resource();
+					newResource.setId(resourceDto.getLegajo());
+					newResource.setName(resourceDto.getNombre());
+					newResource.setLastName(resourceDto.getApellido());
+					newResource.setTasks(new HashSet<>());
+					return resourceRepository.save(newResource);
+				});
+
+		// Remove the task from the old resource if it exists
+		if (task.getResource() != null) {
+			task.getResource().removeTask(task);
+		}
+		// Add the task to the new resource
+		resource.addTask(task);
+
+		// Save the task and return the resource
+		task.setResource(resource);
+		taskRepository.save(task);
+	}
+      
+
+  public Task updateTask(Task existingTask, CreateTaskDto taskDto) {
+    existingTask.setTitle(taskDto.getTitle());
+    existingTask.setDescription(taskDto.getDescription());
+    existingTask.setStartDate(taskDto.getStartDate());
+    existingTask.setEndDate(taskDto.getEndDate());
+    existingTask.setStatus(taskDto.getStatus());
+    existingTask.setEstimation(taskDto.getEstimation());
+
+    // Update the resource if provided
+    if (taskDto.getRecurso() != null) {
+      Resource resource = resourceRepository.findById(taskDto.getRecurso().getLegajo())
+          .orElseGet(() -> {
+            Resource newResource = new Resource();
+            newResource.setId(taskDto.getRecurso().getLegajo());
+            newResource.setName(taskDto.getRecurso().getNombre());
+            newResource.setLastName(taskDto.getRecurso().getApellido());
+            newResource.setTasks(new HashSet<>());
+            return resourceRepository.save(newResource);
+          });
+
+      // Remove task from old resource if exists
+      if (existingTask.getResource() != null) {
+        existingTask.getResource().removeTask(existingTask);
+      }
+
+      // Add task to new resource
+      resource.addTask(existingTask);
+      existingTask.setResource(resource);
+    } else {
+      // Remove task from old resource if exists and new resource is not provided
+      if (existingTask.getResource() != null) {
+        existingTask.getResource().removeTask(existingTask);
+        existingTask.setResource(null);
+      }
     }
 
-    resource.getTasks().add(task);
-    Resource newResource = resourceRepository.save(resource);
-    try {
-    task.setResource(newResource);
-    taskRepository.save(task);
-
-    } catch (Exception e) {
-      System.out.println("Error saving task: " + e.getMessage());
-      throw new RuntimeException("Error saving task: " + e.getMessage());
-    }
-    return newResource;
+    // Save the updated task
+    return taskRepository.save(existingTask);
   }
+
+
+
 
 
 

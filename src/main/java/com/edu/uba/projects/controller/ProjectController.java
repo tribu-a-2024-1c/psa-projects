@@ -6,12 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.edu.uba.projects.dto.AssignResourceDto;
@@ -101,7 +96,7 @@ public class ProjectController {
     }
 
 
-    
+
     @GetMapping("/tasks")
     @Operation(summary = "Get all tasks across all projects")
     public ResponseEntity<List<Task>> getAllTasks() {
@@ -136,11 +131,11 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.CREATED).body(newResource);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage()); 
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-   
-    
+
+
     // Obtain all tasks associated to a resource
     @GetMapping("/resources/{resourceId}/tasks")
     @Operation(summary = "Get all tasks associated to a resource")
@@ -148,7 +143,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "200", description = "Tasks found"),
             @ApiResponse(responseCode = "404", description = "Resource not found")
     })
-    
+
     public ResponseEntity<List<Task>> getTasksByResource(@PathVariable Long resourceId) {
         Optional<Resource> resource = projectService.getResource(resourceId);
         if (!resource.isPresent()) {
@@ -161,10 +156,28 @@ public class ProjectController {
             System.out.println(e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-        
+
 
     }
-
-
+    @PutMapping("/tasks/{taskId}")
+    @Operation(summary = "Update an existing task")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Task updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Task not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
+    public ResponseEntity<Task> updateTask(@PathVariable Long taskId, @RequestBody CreateTaskDto taskDto) {
+        Optional<Task> existingTask = projectService.getTask(taskId);
+        if (existingTask.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        try {
+            Task updatedTask = projectService.updateTask(existingTask.get(), taskDto);
+            return ResponseEntity.ok(updatedTask);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }
 
