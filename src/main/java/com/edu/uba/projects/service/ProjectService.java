@@ -51,7 +51,7 @@ public class ProjectService {
   }
 
   /// get project by id
-  public Optional<Project> getProject(Long projectId){
+  public Optional<Project> getProject(Long projectId) {
     return projectRepository.findById(projectId);
   }
 
@@ -93,9 +93,8 @@ public class ProjectService {
   }
 
 
-
   /// get tasks by project
-  public List<Task> getTasks(Project project){
+  public List<Task> getTasks(Project project) {
     return taskRepository.findByProject(project);
   }
 
@@ -132,29 +131,34 @@ public class ProjectService {
   }
 
   /// assign a resource to a task
-	public Resource assignResourceToTask(Task task, AssignResourceDto resourceDto) {
-		Resource resource = resourceRepository.findById(resourceDto.getLegajo())
-				.orElseGet(() -> {
-					Resource newResource = new Resource();
-					newResource.setId(resourceDto.getLegajo());
-					newResource.setName(resourceDto.getNombre());
-					newResource.setLastName(resourceDto.getApellido());
-					newResource.setTasks(new HashSet<>());
-					return resourceRepository.save(newResource);
-				});
+  public Resource assignResourceToTask(Task task, AssignResourceDto resourceDto) {
+    // Find the resource by ID or create a new one
+    Resource resource = resourceRepository.findById(resourceDto.getLegajo())
+        .orElseGet(() -> {
+          Resource newResource = new Resource();
+          newResource.setId(resourceDto.getLegajo());
+          newResource.setName(resourceDto.getNombre());
+          newResource.setLastName(resourceDto.getApellido());
+          newResource.setTasks(new HashSet<>());
+          return resourceRepository.save(newResource);
+        });
 
-		// Remove the task from the old resource if it exists
-		if (task.getResource() != null) {
-			task.getResource().removeTask(task);
-		}
-		// Add the task to the new resource
-		resource.addTask(task);
+    // Remove the task from the old resource if it exists
+    if (task.getResource() != null) {
+      task.getResource().removeTask(task);
+    }
 
-		// Save the task and return the resource
-		task.setResource(resource);
-		taskRepository.save(task);
-	}
-      
+    // Add the task to the new resource
+    resource.addTask(task);
+
+    // Save the updated task and resource
+    task.setResource(resource);
+    taskRepository.save(task);
+    resourceRepository.save(resource);
+
+    return resource;
+  }
+
 
   public Task updateTask(Task existingTask, CreateTaskDto taskDto) {
     existingTask.setTitle(taskDto.getTitle());
