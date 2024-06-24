@@ -246,4 +246,31 @@ public class ProjectService {
     logger.info("✅ Task found: {}", task);
     return task;
   }
+
+  public Project finalizeProject(Long projectId) {
+    logger.info("🔍 Fetching project with id: {}", projectId);
+    Optional<Project> optionalProject = projectRepository.findById(projectId);
+    if (optionalProject.isEmpty()) {
+      logger.error("❌ Project with id {} does not exist", projectId);
+      throw new IllegalStateException("The project does not exist");
+    }
+    Project project = optionalProject.get();
+    logger.info("✅ Project found: {}", project);
+
+    logger.info("🔍 Fetching tasks for project");
+    List<Task> tasks = taskRepository.findByProject(project);
+    logger.info("✅ Tasks found: {}", tasks);
+
+    if (tasks.stream().anyMatch(task -> task.getStatus() == "Finalizado")) {
+      logger.error("❌ Project cannot be finalized because there are tasks that are not finalized");
+      throw new IllegalStateException("The project cannot be finalized because there are tasks that are not finalized");
+    }
+
+    logger.info("🔍 Finalizing project");
+    project.setStatus("Finalizado");
+    Project finalizedProject = projectRepository.save(project);
+    logger.info("✅ Project finalized: {}", finalizedProject);
+
+    return finalizedProject;
+  }
 }

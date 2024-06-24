@@ -216,5 +216,18 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    @PutMapping("/{projectId}/finalize")
+    @Operation(summary = "Finalize a project")
+    public ResponseEntity<Project> finalizeProject(@PathVariable Long projectId) {
+        try {
+            Project project = projectService.finalizeProject(projectId);
+            return ResponseEntity.ok(project);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
 }
 
