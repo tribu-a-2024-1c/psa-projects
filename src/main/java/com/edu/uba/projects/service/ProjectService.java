@@ -3,8 +3,11 @@ package com.edu.uba.projects.service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.edu.uba.projects.dto.TicketDto;
 import com.edu.uba.projects.model.Resource;
 
+import com.edu.uba.projects.model.Ticket;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -200,6 +203,40 @@ public class ProjectService {
     return taskRepository.save(existingTask);
   }
 
+
+  @Transactional
+  public Task assignTicketToTask(Long taskId, TicketDto ticketDto) {
+    Optional<Task> optionalTask = taskRepository.findById(taskId);
+    if (optionalTask.isEmpty()) {
+      throw new IllegalStateException("The task does not exist");
+    }
+    Task task = optionalTask.get();
+    Ticket ticket = convertToEntity(ticketDto);
+    task.setTicket(ticket);
+    return taskRepository.save(task);
+  }
+
+  public Task getTaskById(Long taskId) {
+    Optional<Task> optionalTask = taskRepository.findById(taskId);
+    if (optionalTask.isEmpty()) {
+      throw new IllegalStateException("The task does not exist");
+    }
+    return optionalTask.get();
+  }
+
+  private Ticket convertToEntity(TicketDto ticketDto) {
+    Ticket ticket = new Ticket();
+    ticket.setId(ticketDto.getId());
+    ticket.setTitle(ticketDto.getTitle());
+    return ticket;
+  }
+
+  private TicketDto convertToDto(Ticket ticket) {
+    TicketDto ticketDto = new TicketDto();
+    ticketDto.setId(ticket.getId());
+    ticketDto.setTitle(ticket.getTitle());
+    return ticketDto;
+  }
 
 
 

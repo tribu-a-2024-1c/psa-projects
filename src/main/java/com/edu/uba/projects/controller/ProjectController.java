@@ -3,6 +3,7 @@ package com.edu.uba.projects.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.edu.uba.projects.dto.TicketDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,8 @@ import com.edu.uba.projects.dto.CreateTaskDto;
 import com.edu.uba.projects.model.Project;
 import com.edu.uba.projects.model.Resource;
 import com.edu.uba.projects.model.Task;
+import com.edu.uba.projects.model.Ticket;
+
 import com.edu.uba.projects.service.ProjectService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -177,6 +180,40 @@ public class ProjectController {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PostMapping("/tasks/{taskId}/assignTicket")
+    @Operation(summary = "Assign a ticket to a task")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Ticket assigned to task"),
+        @ApiResponse(responseCode = "404", description = "Task not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
+    public ResponseEntity<Task> assignTicketToTask(@PathVariable Long taskId, @RequestBody TicketDto ticketDto) {
+        try {
+            Task updatedTask = projectService.assignTicketToTask(taskId, ticketDto);
+            return ResponseEntity.ok(updatedTask);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @GetMapping("/task/{taskId}")
+    @Operation(summary = "Get task by ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Task found"),
+        @ApiResponse(responseCode = "404", description = "Task not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
+    public ResponseEntity<Task> getTaskById(@PathVariable Long taskId) {
+        try {
+            Task task = projectService.getTaskById(taskId);
+            return ResponseEntity.ok(task);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 }
