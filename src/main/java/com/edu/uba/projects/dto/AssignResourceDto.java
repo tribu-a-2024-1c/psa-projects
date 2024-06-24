@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AssignResourceDto {
-    private String name;
-    private String address;
-    private String phone;
+    private long legajo;
+    private String nombre;
+    private String apellido;
 }
