@@ -41,7 +41,7 @@ public class Project {
     @Column(name = "descripcion")
     private String description;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     @JsonBackReference // to avoid infinite recursion when serializing the object
     private Set<Task> tasks;
 
