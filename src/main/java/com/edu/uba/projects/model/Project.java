@@ -12,9 +12,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -41,9 +44,16 @@ public class Project {
     @Column(name = "descripcion")
     private String description;
 
+
+    @ManyToOne
+    @ToString.Exclude // to avoid stackoverflow error due to circular reference when printing the object
+    @JoinColumn(name="recurso_id")
+    private Resource leader;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     @JsonBackReference // to avoid infinite recursion when serializing the object
     private Set<Task> tasks;
+
 
     @Override
     public boolean equals(Object o) {

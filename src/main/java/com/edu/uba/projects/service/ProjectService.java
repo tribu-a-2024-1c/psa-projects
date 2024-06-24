@@ -1,14 +1,12 @@
 package com.edu.uba.projects.service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.edu.uba.projects.dto.TicketDto;
-import com.edu.uba.projects.model.Resource;
-
-import com.edu.uba.projects.model.Ticket;
-import com.edu.uba.projects.repository.TicketRepository;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +15,17 @@ import org.springframework.stereotype.Service;
 import com.edu.uba.projects.dto.AssignResourceDto;
 import com.edu.uba.projects.dto.CreateProjectDto;
 import com.edu.uba.projects.dto.CreateTaskDto;
+import com.edu.uba.projects.dto.TicketDto;
 import com.edu.uba.projects.model.Project;
+import com.edu.uba.projects.model.Resource;
 import com.edu.uba.projects.model.Task;
+import com.edu.uba.projects.model.Ticket;
 import com.edu.uba.projects.repository.ProjectRepository;
 import com.edu.uba.projects.repository.ResourceRepository;
 import com.edu.uba.projects.repository.TaskRepository;
+import com.edu.uba.projects.repository.TicketRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ProjectService {
@@ -56,7 +60,31 @@ public class ProjectService {
     project.setStatus(createProjectDto.getStatus());
     project.setDescription(createProjectDto.getDescription());
     project.setTasks(new HashSet<>());
+    project.setLeader(null);
 
+    Project newProject = projectRepository.save(project);
+
+    Optional<Resource> optionalResource = resourceRepository.findById(createProjectDto.getLeader().getLegajo());
+
+    if (optionalResource.isPresent()) {
+      Resource resource = optionalResource.get();
+      resource.getProjects().add(newProject);
+      resourceRepository.save(resource);
+      newProject.setLeader(resource);
+      
+    }
+    else {
+      Resource resource = new Resource();
+      resource.setId(createProjectDto.getLeader().getLegajo());
+      resource.setName(createProjectDto.getLeader().getNombre());
+      resource.setLastName(createProjectDto.getLeader().getApellido());
+      resource.setTasks(new HashSet<>());
+      resource.setProjects(new HashSet<>());
+      resource.getProjects().add(newProject);
+      Resource newResource = resourceRepository.save(resource);
+      newProject.setLeader(newResource);
+     
+    }
     return projectRepository.save(project);
   }
 
