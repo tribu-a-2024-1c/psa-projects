@@ -7,6 +7,7 @@ import com.edu.uba.projects.dto.TicketDto;
 import com.edu.uba.projects.model.Resource;
 
 import com.edu.uba.projects.model.Ticket;
+import com.edu.uba.projects.repository.TicketRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,14 @@ public class ProjectService {
   private final ProjectRepository projectRepository;
   private final TaskRepository taskRepository;
   private final ResourceRepository resourceRepository;
+  private final TicketRepository ticketRepository;
 
   @Autowired
-  public ProjectService(ProjectRepository projectRepository, TaskRepository taskRepository, ResourceRepository resourceRepository) {
+  public ProjectService(ProjectRepository projectRepository, TaskRepository taskRepository, ResourceRepository resourceRepository, TicketRepository ticketRepository) {
     this.projectRepository = projectRepository;
     this.taskRepository = taskRepository;
     this.resourceRepository = resourceRepository;
+    this.ticketRepository = ticketRepository;
   }
 
   /// get all projects
@@ -95,7 +98,6 @@ public class ProjectService {
     return savedTask;
   }
 
-
   /// get tasks by project
   public List<Task> getTasks(Project project) {
     return taskRepository.findByProject(project);
@@ -116,7 +118,6 @@ public class ProjectService {
     return taskRepository.findById(taskId);
   }
 
-
   /// get resources by project
   public List<Resource> getResources(Project project) {
     Set<Task> tasks = project.getTasks();
@@ -126,7 +127,6 @@ public class ProjectService {
         .distinct()
         .collect(Collectors.toList());
   }
-
 
   /// get resource by id
   public Optional<Resource> getResource(Long resourceId) {
@@ -161,7 +161,6 @@ public class ProjectService {
 
     return resource;
   }
-
 
   public Task updateTask(Task existingTask, CreateTaskDto taskDto) {
     existingTask.setTitle(taskDto.getTitle());
@@ -203,7 +202,6 @@ public class ProjectService {
     return taskRepository.save(existingTask);
   }
 
-
   @Transactional
   public Task assignTicketToTask(Long taskId, TicketDto ticketDto) {
     Optional<Task> optionalTask = taskRepository.findById(taskId);
@@ -211,7 +209,15 @@ public class ProjectService {
       throw new IllegalStateException("The task does not exist");
     }
     Task task = optionalTask.get();
-    Ticket ticket = convertToEntity(ticketDto);
+
+    Ticket ticket = ticketRepository.findById(ticketDto.getId())
+        .orElseGet(() -> {
+          Ticket newTicket = new Ticket();
+          newTicket.setId(ticketDto.getId());
+          newTicket.setTitle(ticketDto.getTitle());
+          return ticketRepository.save(newTicket);
+        });
+
     task.setTicket(ticket);
     return taskRepository.save(task);
   }
@@ -223,69 +229,5 @@ public class ProjectService {
     }
     return optionalTask.get();
   }
-
-  private Ticket convertToEntity(TicketDto ticketDto) {
-    Ticket ticket = new Ticket();
-    ticket.setId(ticketDto.getId());
-    ticket.setTitle(ticketDto.getTitle());
-    return ticket;
-  }
-
-  private TicketDto convertToDto(Ticket ticket) {
-    TicketDto ticketDto = new TicketDto();
-    ticketDto.setId(ticket.getId());
-    ticketDto.setTitle(ticket.getTitle());
-    return ticketDto;
-  }
-
-
-
-
-
-//   public Task assignResourceToTask(Task task, AssignResourceDto resourceDto) {
-//     Resource resource = new Resource();
-//     try {
-//         resource.setName(resourceDto.getName());
-//         resource.setAddress(resourceDto.getAddress());
-//         resource.setPhone(resourceDto.getPhone());
-//         resource.setProject(task.getProject());
-//         resource.setTasks(new HashSet<>());
-//     } catch (Exception e) {
-//         System.out.println("Error setting resource properties: " + e.getMessage());
-//     }
-
-//     try {
-//         if (task.getResource() != null) {
-//             task.getResource().getTasks().remove(task);
-//         }
-//     } catch (Exception e) {
-//         System.out.println("Error removing task from previous resource: " + e.getMessage());
-//     }
-
-//     try {
-//         resource.getTasks().add(task);
-//     } catch (Exception e) {
-//         System.out.println("Error adding task to new resource: " + e.getMessage());
-//     }
-
-//     try {
-//         resourceRepository.save(resource);
-//     } catch (Exception e) {
-//         System.out.println("Error saving new resource: " + e.getMessage());
-//     }
-
-//     try {
-//         task.setResource(resource);
-//     } catch (Exception e) {
-//         System.out.println("Error setting new resource on task: " + e.getMessage());
-//     }
-
-//     try {
-//         return taskRepository.save(task);
-//     } catch (Exception e) {
-//         System.out.println("Error saving task: " + e.getMessage());
-//         return null;
-//     }
-// }
 
 }

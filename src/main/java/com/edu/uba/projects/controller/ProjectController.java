@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.edu.uba.projects.dto.TicketDto;
+import com.edu.uba.projects.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,7 @@ import com.edu.uba.projects.dto.CreateTaskDto;
 import com.edu.uba.projects.model.Project;
 import com.edu.uba.projects.model.Resource;
 import com.edu.uba.projects.model.Task;
-import com.edu.uba.projects.model.Ticket;
 
-import com.edu.uba.projects.service.ProjectService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -182,6 +181,7 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
 
     @PostMapping("/tasks/{taskId}/assignTicket")
     @Operation(summary = "Assign a ticket to a task")
