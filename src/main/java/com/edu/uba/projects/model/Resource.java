@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +29,15 @@ public class Resource {
 
 	@Column(name = "apellido")
 	private String lastName;
+
+
+	// project leader of the resource
+	@OneToMany(mappedBy = "leader", cascade = CascadeType.ALL)
+	@JsonManagedReference // to avoid infinite recursion when serializing the object
+	@JsonIgnoreProperties({"leader", "tasks"})
+	private Set<Project> projects = new HashSet<>();
+
+
 
 	@OneToMany(mappedBy = "resource", cascade = CascadeType.ALL)
 	@JsonManagedReference // to avoid infinite recursion when serializing the object
