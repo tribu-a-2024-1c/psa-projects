@@ -9,6 +9,8 @@ import com.edu.uba.projects.model.Resource;
 import com.edu.uba.projects.model.Ticket;
 import com.edu.uba.projects.repository.TicketRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ import com.edu.uba.projects.repository.TaskRepository;
 
 @Service
 public class ProjectService {
+
+  private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
   private final ProjectRepository projectRepository;
   private final TaskRepository taskRepository;
@@ -204,30 +208,42 @@ public class ProjectService {
 
   @Transactional
   public Task assignTicketToTask(Long taskId, TicketDto ticketDto) {
+    logger.info("🔍 Fetching task with id: {}", taskId);
     Optional<Task> optionalTask = taskRepository.findById(taskId);
     if (optionalTask.isEmpty()) {
+      logger.error("❌ Task with id {} does not exist", taskId);
       throw new IllegalStateException("The task does not exist");
     }
     Task task = optionalTask.get();
+    logger.info("✅ Task found: {}", task);
 
+    logger.info("🔍 Fetching ticket with id: {}", ticketDto.getId());
     Ticket ticket = ticketRepository.findById(ticketDto.getId())
         .orElseGet(() -> {
+          logger.info("📦 Creating new ticket with id: {}", ticketDto.getId());
           Ticket newTicket = new Ticket();
           newTicket.setId(ticketDto.getId());
           newTicket.setTitle(ticketDto.getTitle());
           return ticketRepository.save(newTicket);
         });
 
+    logger.info("🔗 Assigning ticket to task");
     task.setTicket(ticket);
-    return taskRepository.save(task);
+    Task updatedTask = taskRepository.save(task);
+    logger.info("✅ Task updated: {}", updatedTask);
+
+    return updatedTask;
   }
 
   public Task getTaskById(Long taskId) {
+    logger.info("🔍 Fetching task by id: {}", taskId);
     Optional<Task> optionalTask = taskRepository.findById(taskId);
     if (optionalTask.isEmpty()) {
+      logger.error("❌ Task with id {} does not exist", taskId);
       throw new IllegalStateException("The task does not exist");
     }
-    return optionalTask.get();
+    Task task = optionalTask.get();
+    logger.info("✅ Task found: {}", task);
+    return task;
   }
-
 }
