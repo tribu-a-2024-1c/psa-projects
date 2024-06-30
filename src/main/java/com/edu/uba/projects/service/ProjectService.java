@@ -7,15 +7,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.edu.uba.projects.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.edu.uba.projects.dto.AssignResourceDto;
-import com.edu.uba.projects.dto.CreateProjectDto;
-import com.edu.uba.projects.dto.CreateTaskDto;
-import com.edu.uba.projects.dto.TicketDto;
 import com.edu.uba.projects.model.Project;
 import com.edu.uba.projects.model.Resource;
 import com.edu.uba.projects.model.Task;
@@ -71,7 +68,7 @@ public class ProjectService {
       resource.getProjects().add(newProject);
       resourceRepository.save(resource);
       newProject.setLeader(resource);
-      
+
     }
     else {
       Resource resource = new Resource();
@@ -83,7 +80,7 @@ public class ProjectService {
       resource.getProjects().add(newProject);
       Resource newResource = resourceRepository.save(resource);
       newProject.setLeader(newResource);
-     
+
     }
     return projectRepository.save(project);
   }
@@ -300,5 +297,30 @@ public class ProjectService {
     logger.info("✅ Project finalized: {}", finalizedProject);
 
     return finalizedProject;
+  }
+  public Project updateProject(Long projectId, UpdateProjectDto updateProjectDto) {
+    Project project = projectRepository.findById(projectId)
+        .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
+
+    project.setTitle(updateProjectDto.getTitle());
+    project.setStartDate(updateProjectDto.getStartDate());
+    project.setEndDate(updateProjectDto.getEndDate());
+    project.setStatus(updateProjectDto.getStatus());
+    project.setDescription(updateProjectDto.getDescription());
+
+    if (updateProjectDto.getLeader() != null) {
+      Resource leader = resourceRepository.findById(updateProjectDto.getLeader().getLegajo())
+          .orElseGet(() -> {
+            Resource newResource = new Resource();
+            newResource.setId(updateProjectDto.getLeader().getLegajo());
+            newResource.setName(updateProjectDto.getLeader().getNombre());
+            newResource.setLastName(updateProjectDto.getLeader().getApellido());
+            newResource.setTasks(new HashSet<>());
+            return resourceRepository.save(newResource);
+          });
+      project.setLeader(leader);
+    }
+
+    return projectRepository.save(project);
   }
 }

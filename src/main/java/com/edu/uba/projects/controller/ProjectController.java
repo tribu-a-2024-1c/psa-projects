@@ -3,7 +3,7 @@ package com.edu.uba.projects.controller;
 import java.util.List;
 import java.util.Optional;
 
-import com.edu.uba.projects.dto.TicketDto;
+import com.edu.uba.projects.dto.*;
 import com.edu.uba.projects.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.edu.uba.projects.dto.AssignResourceDto;
-import com.edu.uba.projects.dto.CreateProjectDto;
-import com.edu.uba.projects.dto.CreateTaskDto;
 import com.edu.uba.projects.model.Project;
 import com.edu.uba.projects.model.Resource;
 import com.edu.uba.projects.model.Task;
@@ -223,6 +220,22 @@ public class ProjectController {
         try {
             Project project = projectService.finalizeProject(projectId);
             return ResponseEntity.ok(project);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+    @PutMapping("/{projectId}")
+    @Operation(summary = "Update an existing project")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Project updated successfully"),
+        @ApiResponse(responseCode = "404", description = "Project not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
+    public ResponseEntity<Project> updateProject(@PathVariable Long projectId, @RequestBody UpdateProjectDto projectDto) {
+        try {
+            Project updatedProject = projectService.updateProject(projectId, projectDto);
+            return ResponseEntity.ok(updatedProject);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
