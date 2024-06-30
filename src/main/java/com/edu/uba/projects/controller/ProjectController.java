@@ -241,6 +241,16 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-
+    @GetMapping("/{projectId}")
+    @Operation(summary = "Get project by ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Project found"),
+        @ApiResponse(responseCode = "404", description = "Project not found"),
+        @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
+    public ResponseEntity<Project> getProjectById(@PathVariable Long projectId) {
+        Optional<Project> project = projectService.getProject(projectId);
+	    return project.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+    }
 }
 
